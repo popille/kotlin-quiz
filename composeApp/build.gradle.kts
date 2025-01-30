@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
-
+    id("app.cash.sqldelight") version "2.0.2"
 }
 
 kotlin {
@@ -55,11 +55,20 @@ kotlin {
     }
 
     sourceSets {
-        val desktopMain by getting
+        val desktopMain by getting {
+            dependencies {
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.coroutines.extensions)
+                implementation(libs.kotlinx.datetime.v041)
+            }
+        }
 
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.android.driver)
+
+
         }
         commonMain.dependencies {
 
@@ -76,11 +85,21 @@ kotlin {
                 implementation(libs.androidx.lifecycle.runtime.compose)
                 implementation(libs.kotlin.navigation)
                 implementation(libs.ktor.serialization.kotlinx.json)
+
+                implementation(libs.ktor.client.core.v230)
+                implementation(libs.ktor.client.json)
+                implementation(libs.ktor.client.serialization)
+                implementation(libs.ktor.client.cio)
+                implementation(libs.runtime)
+
+
             }
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.sqlite.driver)
+
         }
     }
 }
@@ -124,6 +143,17 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.wordline.quiz"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.wordline.quiz.db")
+            generateAsync.set(true)
+
         }
     }
 }

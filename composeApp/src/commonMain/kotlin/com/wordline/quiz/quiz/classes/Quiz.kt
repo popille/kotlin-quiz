@@ -1,3 +1,6 @@
 package com.wordline.quiz.quiz.classes
 
-data class Quiz(val questionList: ArrayList<Question>)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Quiz(val id: Int, val questionList: ArrayList<Question>)

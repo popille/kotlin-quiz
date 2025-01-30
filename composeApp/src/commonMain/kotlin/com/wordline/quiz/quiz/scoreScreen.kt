@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun scoreScreen(score: Int, scoreMax: Int) {
+fun scoreScreen(score: Int, scoreMax: Int, onEndScoreView: () -> Unit) {
     val score by remember { mutableStateOf(score) }
     val scoreMax by remember { mutableStateOf(scoreMax) }
 
@@ -47,7 +47,7 @@ fun scoreScreen(score: Int, scoreMax: Int) {
                 Spacer(Modifier.height(10.dp))
                 Text("$score out of $scoreMax", fontSize = 25.sp)
                 Spacer(Modifier.height(10.dp))
-                Button(onClick = {}, Modifier.clip(CircleShape)) {
+                Button(onClick = { onEndScoreView() }, Modifier.clip(CircleShape)) {
                     Icon(Icons.Default.Refresh, "Retake the quiz")
                     Text("Retake the Quiz")
                 }
