@@ -2,11 +2,15 @@ package com.wordline.quiz
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.wordline.quiz.quiz.data.QuizRepository
+import com.wordline.quiz.quiz.generationScreen
 import com.wordline.quiz.quiz.menuScreen
 import com.wordline.quiz.quiz.questionScreen
 import com.wordline.quiz.quiz.scoreScreen
@@ -19,7 +23,8 @@ object MenuScreen
 
 @Serializable
 data class QuestionScreen(
-    val id_quiz: Int
+    val id_quiz: Int,
+    val generatedQuiz: String
 )
 
 @Serializable
@@ -28,9 +33,15 @@ data class ScoreScreen(
     val scoreMax: Int
 )
 
+@Serializable
+object GenerationScreen
+
+
 @Composable
 @Preview
-fun App(navController: NavHostController = rememberNavController()) {
+fun App(
+    navController: NavHostController = rememberNavController(),
+) {
     MaterialTheme {
 
 
@@ -39,17 +50,24 @@ fun App(navController: NavHostController = rememberNavController()) {
                 menuScreen(
                     onStartQuiz = { id_quiz: Int ->
                         navController.navigate(route = QuestionScreen(id_quiz))
-                    }
+                    },
+                    onGenerateQuiz = { navController.navigate(route = GenerationScreen) }
                 )
             }
             composable<QuestionScreen> { args ->
                 val questionScreen: QuestionScreen = args.toRoute<QuestionScreen>()
+                val quizRepository: QuizRepository = QuizRepository()
+
+                val questions by quizRepository.questionState.collectAsState()
+
+
                 questionScreen(
                     id_quiz = questionScreen.id_quiz,
                     onEndQuiz = { score: Int,
                                   scoreMax: Int ->
                         navController.navigate(route = ScoreScreen(score, scoreMax))
-                    }
+                    },
+                    generatedQuiz = null
                 )
             }
             composable<ScoreScreen> { backStackEntry ->
@@ -59,8 +77,13 @@ fun App(navController: NavHostController = rememberNavController()) {
                     scoreMax = scoreScreen.scoreMax,
                     onEndScoreView = { navController.navigate(route = MenuScreen) }
                 )
-
             }
+            composable<GenerationScreen> {
+                generationScreen(
+                    onGenerateClick = { navController.navigate(route = QuestionScreen) }
+                )
+            }
+
         }
 
     }

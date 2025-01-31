@@ -35,12 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wordline.quiz.quiz.classes.Answer
-import com.wordline.quiz.quiz.classes.Question
-import com.wordline.quiz.quiz.classes.Quiz
+import com.wordline.quiz.quiz.data.dataclass.Answer
+import com.wordline.quiz.quiz.data.dataclass.Question
+import com.wordline.quiz.quiz.data.dataclass.Quiz
 
 @Composable
-fun questionScreen(id_quiz: Int, onEndQuiz: (Int, Int) -> Unit) {
+fun questionScreen(id_quiz: Int?, onEndQuiz: (Int, Int) -> Unit, generatedQuiz: Quiz?) {
 
     val quiz = Quiz(
         1,
@@ -175,7 +175,7 @@ fun questionScreen(id_quiz: Int, onEndQuiz: (Int, Int) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            Box() {
+            Box {
                 Column(
                     Modifier.padding(30.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
@@ -195,7 +195,7 @@ fun questionScreen(id_quiz: Int, onEndQuiz: (Int, Int) -> Unit) {
 
                         }
                     }
-                    Box() {
+                    Box {
                         Spacer(Modifier.height(20.dp))
                         Column {
                             for (answer in quiz.questionList[idQuestionEnCours - 1].answers) {
@@ -239,7 +239,7 @@ fun questionScreen(id_quiz: Int, onEndQuiz: (Int, Int) -> Unit) {
                                         score,
                                         scoreMax
                                     )
-                                };
+                                }
                             }
                         },
                         Modifier.clip(CircleShape),

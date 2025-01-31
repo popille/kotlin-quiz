@@ -1,4 +1,4 @@
-package com.wordline.quiz.quiz.classes
+package com.wordline.quiz.quiz.data.dataclass
 
 import kotlinx.serialization.Serializable
 

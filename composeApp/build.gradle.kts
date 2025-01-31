@@ -60,6 +60,8 @@ kotlin {
                 implementation(libs.sqldelight.runtime)
                 implementation(libs.coroutines.extensions)
                 implementation(libs.kotlinx.datetime.v041)
+
+
             }
         }
 
@@ -67,6 +69,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.android.driver)
+            implementation(libs.ktor.client.okhttp)
 
 
         }
@@ -91,6 +94,12 @@ kotlin {
                 implementation(libs.ktor.client.serialization)
                 implementation(libs.ktor.client.cio)
                 implementation(libs.runtime)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.ktor.client.auth)
 
 
             }
@@ -99,6 +108,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.sqlite.driver)
+            implementation(libs.ktor.client.apache)
 
         }
     }
@@ -148,12 +158,12 @@ compose.desktop {
 }
 
 
-sqldelight {
-    databases {
-        create("Database") {
-            packageName.set("com.wordline.quiz.db")
-            generateAsync.set(true)
-
-        }
-    }
-}
+//sqldelight {
+//    databases {
+//        create("Database") {
+//            packageName.set("com.wordline.quiz.db")
+//            generateAsync.set(true)
+//
+//        }
+//    }
+//}
