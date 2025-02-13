@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.RadioButton
@@ -38,16 +40,30 @@ import androidx.compose.ui.unit.sp
 import com.wordline.quiz.quiz.data.dataclass.Question
 
 @Composable
-fun questionScreen(onEndQuiz: (Int, Int) -> Unit, generatedQuiz: List<Question>) {
+fun questionScreen(onEndQuiz: (Int, Int) -> Unit, quiz: List<Question>) {
 
-    val quiz = generatedQuiz
     println("depuis ecran de question = > $quiz")
     if (quiz.isEmpty()) {
-        Text("Chargement...")
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(200.dp),
+                strokeWidth = 20.dp,
+                color = Color.Blue
+            )
+            Text(
+                text = "Génération",
+                color = Color.Black,
+                fontSize = 20.sp
+            )
+        }
+
     } else {
 
 
-        var scoreMax by remember { mutableStateOf(quiz.size) }
+        val scoreMax by remember { mutableStateOf(quiz.size) }
         var score by remember { mutableStateOf(0) }
         var idQuestionEnCours by remember { mutableStateOf(1) }
         var optnSelectionne by remember { mutableStateOf(-1) }
@@ -71,7 +87,6 @@ fun questionScreen(onEndQuiz: (Int, Int) -> Unit, generatedQuiz: List<Question>)
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "$score/$scoreMax : $idQuestionEnCours")
                         Card(elevation = 6.dp) {
                             Row(
                                 Modifier.background(Color.Blue.copy(0.1f)).padding(10.dp).clip(
@@ -85,8 +100,8 @@ fun questionScreen(onEndQuiz: (Int, Int) -> Unit, generatedQuiz: List<Question>)
 
                             }
                         }
+                        Spacer(Modifier.height(40.dp))
                         Box {
-                            Spacer(Modifier.height(20.dp))
                             Column {
                                 for (answer in quiz[idQuestionEnCours - 1].answers) {
                                     Row(
@@ -122,8 +137,7 @@ fun questionScreen(onEndQuiz: (Int, Int) -> Unit, generatedQuiz: List<Question>)
                                     if (idQuestionEnCours < scoreMax) {
                                         optnSelectionne = -1
                                         idQuestionEnCours++
-                                        progressBarVal =
-                                            ((idQuestionEnCours.toFloat() / scoreMax.toFloat()))
+                                        progressBarVal += (1f / scoreMax)
                                     } else if (idQuestionEnCours >= scoreMax) {
                                         onEndQuiz(
                                             score,
@@ -143,7 +157,6 @@ fun questionScreen(onEndQuiz: (Int, Int) -> Unit, generatedQuiz: List<Question>)
                             Text("Next", fontSize = 20.sp)
 
                         }
-
                         Spacer(Modifier.height(20.dp))
                         LinearProgressIndicator(
                             progress = progressBarVal,

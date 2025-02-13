@@ -54,7 +54,7 @@ fun generationScreen(onGenerateClick: (String) -> Unit) {
             Column(
                 Modifier.fillMaxWidth().padding(20.dp, 0.dp)
             ) {
-                Text("Entrer le sujet du quiz", fontSize = 24.sp)
+                Text("Sujet", fontSize = 24.sp)
                 Spacer(Modifier.padding(0.dp, 5.dp))
 
                 OutlinedTextField(
@@ -64,7 +64,7 @@ fun generationScreen(onGenerateClick: (String) -> Unit) {
                 )
                 Spacer(Modifier.padding(0.dp, 5.dp))
                 Button(
-                    onClick = { onGenerateClick(prompt) },
+                    onClick = { onGenerateClick(prompt.trim()) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Générer", fontSize = 25.sp)

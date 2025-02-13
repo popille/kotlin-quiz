@@ -4,6 +4,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -12,6 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.wordline.quiz.quiz.data.QuizRepository
+import com.wordline.quiz.quiz.data.dataclass.Question
+import com.wordline.quiz.quiz.data.dataclass.Quiz
 import com.wordline.quiz.quiz.generationScreen
 import com.wordline.quiz.quiz.menuScreen
 import com.wordline.quiz.quiz.questionScreen
@@ -25,8 +28,8 @@ object MenuScreen
 
 @Serializable
 data class QuestionScreen(
-//    val id_quiz: Int,
-    val prompt: String
+    val prompt: String?,
+    val precPrompt: String?
 )
 
 @Serializable
@@ -46,32 +49,61 @@ fun App(
 ) {
     MaterialTheme {
 
+        val quizList = remember { mutableStateListOf<Quiz>() }
 
         NavHost(navController = navController, startDestination = MenuScreen) {
             composable<MenuScreen> {
                 menuScreen(
-                    onStartQuiz = {
-                        navController.navigate(route = QuestionScreen(""))
+                    onStartQuiz = { selectedQuiz: String ->
+                        navController.navigate(
+                            route = QuestionScreen(
+                                prompt = "",
+                                precPrompt = selectedQuiz
+                            )
+                        )
                     },
-                    onGenerateQuiz = { navController.navigate(route = GenerationScreen) }
+                    onGenerateQuiz = { navController.navigate(route = GenerationScreen) },
+                    quizList = quizList
                 )
             }
             composable<QuestionScreen> { args ->
                 val questionScreen: QuestionScreen = args.toRoute<QuestionScreen>()
 
-                val quizRepository: QuizRepository? = remember(questionScreen.prompt) {
-                    if (questionScreen.prompt.isNotEmpty()) QuizRepository(questionScreen.prompt) else null
+                val questions = remember { mutableStateListOf<Question>() }
+
+                if (questionScreen.precPrompt?.isNotEmpty() == true) {
+
+                    val existingQuiz = quizList.find { it.nom == questionScreen.precPrompt }
+                    if (existingQuiz != null) {
+                        questions.clear()
+                        questions.addAll(existingQuiz.questionList)
+                    }
+                } else {
+                    val quizRepository: QuizRepository? = remember(questionScreen.prompt) {
+                        if (questionScreen.prompt?.isNotEmpty() == true) {
+                            QuizRepository(questionScreen.prompt)
+                        } else null
+                    }
+
+                    val fetchedQuestions by quizRepository?.questionState?.collectAsState()
+                        ?: remember { mutableStateOf(emptyList()) }
+
+                    if (fetchedQuestions.isNotEmpty() && quizList.none { quiz -> quiz.questionList == fetchedQuestions }) {
+                        questionScreen.prompt?.let { Quiz(it, fetchedQuestions) }
+                            ?.let { quizList.add(it) }
+                        questions.clear()
+                        questions.addAll(fetchedQuestions)
+                    }
                 }
-                val questions by quizRepository?.questionState?.collectAsState()
-                    ?: remember { mutableStateOf(emptyList()) }
 
                 questionScreen(
                     onEndQuiz = { score: Int, scoreMax: Int ->
                         navController.navigate(route = ScoreScreen(score, scoreMax))
                     },
-                    generatedQuiz = questions
+                    quiz = questions
                 )
             }
+
 
             composable<ScoreScreen> { backStackEntry ->
                 val scoreScreen: ScoreScreen = backStackEntry.toRoute<ScoreScreen>()
@@ -81,10 +113,16 @@ fun App(
                     onEndScoreView = { navController.navigate(route = MenuScreen) }
                 )
             }
+            
             composable<GenerationScreen> {
                 generationScreen(
                     onGenerateClick = { prompt: String ->
-                        navController.navigate(route = QuestionScreen(prompt))
+                        navController.navigate(
+                            route = QuestionScreen(
+                                prompt = prompt,
+                                precPrompt = ""
+                            )
+                        )
                     }
                 )
             }

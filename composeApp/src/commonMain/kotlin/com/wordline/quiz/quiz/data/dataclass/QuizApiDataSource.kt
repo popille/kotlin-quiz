@@ -9,7 +9,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.headers
@@ -23,7 +22,7 @@ val globalHttpClient = HttpClient {
 
     install(ContentNegotiation) {
         json(
-            contentType = ContentType.Application.Json, // because Github is not returning an 'application/json' header
+            contentType = ContentType.Application.Json,
             json = Json {
                 ignoreUnknownKeys = true
                 useAlternativeNames = false
@@ -41,11 +40,8 @@ val globalHttpClient = HttpClient {
 class QuizApiDatasource {
     private val instruction =
         "Crée un quiz captivant au format JSON, adapté à un public général. Le quiz doit respecter les conditions suivantes :\n" +
-
                 "Le quiz doit comporter exactement 10 questions.\n" +
-
                 "Chaque question doit proposer 4 réponses.\n" +
-
                 "Aucune question ni aucune réponse ne doit être dupliquée.\n" +
                 "Varie la difficulté des questions, allant de facile à modérément difficile.\n" +
                 "Utilise différents types de questions : faits, définitions, applications pratiques, comparaisons, etc.\n" +
@@ -92,14 +88,11 @@ class QuizApiDatasource {
     }"""
                     )
                 }
-            println("response de l'api => (${response}) ${response.bodyAsText()}")
-            // Récupération de la réponse complète
+            println("response de l'api => (${response})")
             val chatResponse = response.body<ChatResponse>()
 
-// Extraction du contenu du quiz dans le premier choix
             val rawQuizContent = chatResponse.choices.firstOrNull()?.message?.content
 
-// Nettoyer le contenu pour enlever les balises markdown si présentes
             val quizJsonString = rawQuizContent
                 ?.trim()
                 ?.removePrefix("```json")
@@ -107,7 +100,7 @@ class QuizApiDatasource {
                 ?.trim()
 
             println("quiz ==> $quizJsonString")
-// Désérialisation en type Quiz (assurez-vous que Quiz est annoté avec @Serializable)
+
             val quiz = quizJsonString?.let {
                 Json.decodeFromString<ArrayList<Question>>(it)
             } ?: throw IllegalStateException("Le quiz n'a pas pu être extrait")
