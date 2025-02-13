@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun generationScreen(onGenerateClick: () -> Unit) {
+fun generationScreen(onGenerateClick: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
 
     Column(
@@ -63,7 +63,7 @@ fun generationScreen(onGenerateClick: () -> Unit) {
                     Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.padding(0.dp, 5.dp))
-                Button(onClick = { onGenerateClick() }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { onGenerateClick(text) }, modifier = Modifier.fillMaxWidth()) {
                     Text("Générer", fontSize = 25.sp)
                 }
             }

@@ -22,21 +22,22 @@ class QuizRepository(prompt: String) {
         generateQuiz(prompt)
     }
 
-    private suspend fun fetchQuiz(): List<Question> =
-        quizApiDatasource.postGenerateQuiz().questionList
+    // private suspend fun fetchQuiz(): List<Question> =
+    //     quizApiDatasource.postGenerateQuiz().questionList
 
-    suspend fun updateQuiz(): List<Question> {
-        try {
-            return fetchQuiz()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return mockDataSource.generateQuestionsList()
-        }
-    }
+//    suspend fun updateQuiz(): List<Question> {
+//        try {
+//            return fetchQuiz()
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            return mockDataSource.generateQuestionsList()
+//        }
+//    }
 
     private fun generateQuiz(prompt: String) {
         coroutineScope.launch {
             _questionState.update {
+
                 quizApiDatasource.postGenerateQuiz(prompt = prompt).questionList
             }
         }
