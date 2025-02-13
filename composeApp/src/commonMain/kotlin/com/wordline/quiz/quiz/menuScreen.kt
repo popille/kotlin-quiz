@@ -30,9 +30,9 @@ import com.wordline.quiz.quiz.data.dataclass.Question
 import com.wordline.quiz.quiz.data.dataclass.Quiz
 
 @Composable
-fun menuScreen(onStartQuiz: (Int) -> Unit, onGenerateQuiz: () -> Unit) {
+fun menuScreen(onStartQuiz: () -> Unit, onGenerateQuiz: () -> Unit) {
     val quiz = Quiz(
-        1,
+
         questionList = arrayListOf(
             Question(
                 id = 1,
@@ -184,7 +184,7 @@ fun menuScreen(onStartQuiz: (Int) -> Unit, onGenerateQuiz: () -> Unit) {
                 ) {
                     Text("Général", fontSize = 20.sp)
                     Button(
-                        onClick = { onStartQuiz(quiz.id) },
+                        onClick = { onStartQuiz() },
                         Modifier.clip(CircleShape)
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowForward, "Start the quiz")
@@ -201,7 +201,7 @@ fun menuScreen(onStartQuiz: (Int) -> Unit, onGenerateQuiz: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("Quiz", fontSize = 20.sp)
-                    Button(onClick = { onStartQuiz(quiz.id) }, Modifier.clip(CircleShape)) {
+                    Button(onClick = { onStartQuiz() }, Modifier.clip(CircleShape)) {
                         Icon(Icons.AutoMirrored.Filled.ArrowForward, "Start the quiz")
                     }
                 }

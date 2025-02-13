@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun generationScreen(onGenerateClick: (String) -> Unit) {
-    var text by remember { mutableStateOf("") }
+    var prompt by remember { mutableStateOf("") }
 
     Column(
         Modifier.fillMaxWidth().fillMaxHeight().padding(0.dp, 20.dp, 0.dp, 0.dp),
@@ -58,12 +58,15 @@ fun generationScreen(onGenerateClick: (String) -> Unit) {
                 Spacer(Modifier.padding(0.dp, 5.dp))
 
                 OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = prompt,
+                    onValueChange = { prompt = it },
                     Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.padding(0.dp, 5.dp))
-                Button(onClick = { onGenerateClick(text) }, modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = { onGenerateClick(prompt) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text("Générer", fontSize = 25.sp)
                 }
             }
