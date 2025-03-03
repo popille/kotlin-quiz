@@ -31,7 +31,7 @@ val globalHttpClient = HttpClient {
     install(Auth) {
         bearer {
             loadTokens {
-                BearerTokens("KaQaXPpc0ds4sbOVUBAl3rD3C5wiSmUi", "xyz111")
+                BearerTokens(MISTRAL_APIKEY, "xyz111")
             }
         }
     }
